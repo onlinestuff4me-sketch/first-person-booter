@@ -3,7 +3,7 @@
 #
 # Three ways to use me:
 #   1. Paste this in Terminal (nothing to download first):
-#      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/onlinestuff4me-sketch/first-person-booter/claude/doom-boot-butt-mod-9gbw9g/run-mac.command)"
+#      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/onlinestuff4me-sketch/first-person-booter/main/run-mac.command)"
 #   2. From a cloned/unzipped repo, in Terminal:  bash run-mac.command
 #   3. Double-click in Finder (macOS may block this; use 1 or 2 instead).
 #
@@ -12,7 +12,7 @@
 # anything on your system.
 set -euo pipefail
 
-REPO_RAW="https://raw.githubusercontent.com/onlinestuff4me-sketch/first-person-booter/claude/doom-boot-butt-mod-9gbw9g"
+REPO_RAW="https://raw.githubusercontent.com/onlinestuff4me-sketch/first-person-booter/main"
 HERE="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo "$PWD")"
 say() { printf '\n==> %s\n' "$*"; }
 die() { printf '\nERROR: %s\n' "$*" >&2; read -rp "Press Return to close... "; exit 1; }

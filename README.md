@@ -27,7 +27,7 @@ mechanism has changed.
 Open **Terminal** (⌘-space, type "Terminal") and paste:
 
 ```sh
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/onlinestuff4me-sketch/first-person-booter/claude/doom-boot-butt-mod-9gbw9g/run-mac.command)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/onlinestuff4me-sketch/first-person-booter/main/run-mac.command)"
 ```
 
 That runs `run-mac.command`, which finds GZDoom (or offers to
