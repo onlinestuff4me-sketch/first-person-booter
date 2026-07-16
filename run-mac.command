@@ -1,23 +1,44 @@
 #!/bin/bash
 # First-Person Booter — macOS launcher.
-# Double-click me in Finder (or run: bash run-mac.command).
-# Finds (or offers to install) GZDoom, fetches the free Freedoom game data on
-# first run, then boots the mod. Nothing here touches your system without asking.
+#
+# Three ways to use me:
+#   1. Paste this in Terminal (nothing to download first):
+#      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/onlinestuff4me-sketch/first-person-booter/claude/doom-boot-butt-mod-9gbw9g/run-mac.command)"
+#   2. From a cloned/unzipped repo, in Terminal:  bash run-mac.command
+#   3. Double-click in Finder (macOS may block this; use 1 or 2 instead).
+#
+# Finds (or offers to install) GZDoom, fetches the mod and the free Freedoom
+# game data if they aren't already here, then boots. Asks before changing
+# anything on your system.
 set -euo pipefail
 
-HERE="$(cd "$(dirname "$0")" && pwd)"
+REPO_RAW="https://raw.githubusercontent.com/onlinestuff4me-sketch/first-person-booter/claude/doom-boot-butt-mod-9gbw9g"
+HERE="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo "$PWD")"
 say() { printf '\n==> %s\n' "$*"; }
 die() { printf '\nERROR: %s\n' "$*" >&2; read -rp "Press Return to close... "; exit 1; }
 
 # ---------------------------------------------------------------- the mod --
 PK3=""
-for c in "$HERE/dist/FirstPersonBooter.pk3" "$HERE/FirstPersonBooter.pk3"; do
+for c in "$HERE/dist/FirstPersonBooter.pk3" "$HERE/FirstPersonBooter.pk3" \
+         "$HOME/Downloads/FirstPersonBooter.pk3" \
+         "$HOME/Downloads/first-person-booter/FirstPersonBooter.pk3"; do
 	[ -f "$c" ] && PK3="$c" && break
 done
-[ -n "$PK3" ] || die "FirstPersonBooter.pk3 not found (looked in ./ and ./dist/).
-Keep this script inside the repo folder, or put the pk3 next to it."
+if [ -n "$PK3" ]; then
+	WORKDIR="$(dirname "$PK3")"
+else
+	WORKDIR="$HOME/Downloads/first-person-booter"
+	mkdir -p "$WORKDIR"
+	say "Fetching the mod (~0.5 MB) into $WORKDIR ..."
+	curl -fL --progress-bar "$REPO_RAW/dist/FirstPersonBooter.pk3" \
+		-o "$WORKDIR/FirstPersonBooter.pk3" \
+		|| die "Couldn't download the mod. Check your connection, or grab
+dist/FirstPersonBooter.pk3 from the GitHub repo yourself."
+	PK3="$WORKDIR/FirstPersonBooter.pk3"
+fi
 
 # ----------------------------------------------------------------- gzdoom --
+GZ=""
 find_gzdoom() {
 	GZ=""
 	for c in "/Applications/GZDoom.app/Contents/MacOS/gzdoom" \
@@ -27,6 +48,7 @@ find_gzdoom() {
 	if command -v gzdoom >/dev/null 2>&1; then
 		GZ="$(command -v gzdoom)"
 	fi
+	return 0
 }
 
 BREW=""
@@ -46,7 +68,7 @@ fi
 [ -n "$GZ" ] || die "GZDoom not found. Get the macOS build from https://zdoom.org/downloads,
 drag GZDoom.app into /Applications, then run me again."
 
-# Browser/brew downloads get quarantined and macOS refuses to launch them.
+# Browser/brew downloads get quarantined; macOS then refuses to launch them.
 APP_ROOT="${GZ%/Contents/MacOS/gzdoom}"
 if [ "$APP_ROOT" != "$GZ" ] && xattr -p com.apple.quarantine "$APP_ROOT" >/dev/null 2>&1; then
 	say "macOS has quarantined GZDoom.app (normal for downloaded apps)."
@@ -57,11 +79,12 @@ if [ "$APP_ROOT" != "$GZ" ] && xattr -p com.apple.quarantine "$APP_ROOT" >/dev/n
 	fi
 fi
 
-# --------------------------------------------------------- game data (IWAD) --
+# -------------------------------------------------------- game data (IWAD) --
 SUPPORT="$HOME/Library/Application Support/gzdoom"
 WAD=""
-for c in "$HERE/freedoom2.wad" "$HERE/wads/freedoom2.wad" "$SUPPORT/freedoom2.wad" \
-         "$HOME/Downloads/freedoom2.wad" "$HERE/doom2.wad" "$SUPPORT/doom2.wad" \
+for c in "$WORKDIR/freedoom2.wad" "$HERE/freedoom2.wad" "$HERE/wads/freedoom2.wad" \
+         "$SUPPORT/freedoom2.wad" "$HOME/Downloads/freedoom2.wad" \
+         "$WORKDIR/doom2.wad" "$HERE/doom2.wad" "$SUPPORT/doom2.wad" \
          "$HOME/Downloads/DOOM2.WAD"; do
 	[ -f "$c" ] && WAD="$c" && break
 done
@@ -74,9 +97,9 @@ if [ -z "$WAD" ]; then
 		"https://github.com/freedoom/freedoom/releases/download/v${FD_VER}/freedoom-${FD_VER}.zip" \
 		-o "$TMP/freedoom.zip" \
 		|| die "Download failed. Grab freedoom2.wad from https://freedoom.github.io/download.html
-and put it next to this script, then run me again."
-	unzip -j -o "$TMP/freedoom.zip" "*/freedoom2.wad" -d "$HERE" >/dev/null
-	WAD="$HERE/freedoom2.wad"
+and put it in $WORKDIR, then run me again."
+	unzip -j -o "$TMP/freedoom.zip" "*/freedoom2.wad" -d "$WORKDIR" >/dev/null
+	WAD="$WORKDIR/freedoom2.wad"
 fi
 
 say "Booting: $(basename "$WAD") + $(basename "$PK3")"

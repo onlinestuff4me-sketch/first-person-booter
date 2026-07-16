@@ -22,21 +22,31 @@ mechanism has changed.
 
 ## Quick start
 
-### macOS: the one-double-click way
+### macOS: the paste-one-line way
 
-Download this whole repo (green **Code** button → *Download ZIP*, or
-`git clone`), then double-click **`run-mac.command`**. It finds GZDoom (or
-offers to `brew install --cask gzdoom`), downloads the free Freedoom game
-data on first run, and launches the mod.
+Open **Terminal** (⌘-space, type "Terminal") and paste:
+
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/onlinestuff4me-sketch/first-person-booter/claude/doom-boot-butt-mod-9gbw9g/run-mac.command)"
+```
+
+That runs `run-mac.command`, which finds GZDoom (or offers to
+`brew install --cask gzdoom`), downloads the mod and the free Freedoom game
+data into `~/Downloads/first-person-booter/`, and launches. It asks before
+installing or changing anything.
 
 macOS niceties to know:
 
-* If Finder refuses to run the script ("unidentified developer"):
-  right-click it → **Open**, or on newer macOS approve it under *System
-  Settings → Privacy & Security → Open Anyway*. Zero-drama alternative:
-  open Terminal and run `bash run-mac.command` from the repo folder.
-* Don't double-click the `.pk3` itself — it's not a document, it's cargo.
-  GZDoom loads it; the script passes it in for you.
+* Modern macOS (Sequoia+) flat-out blocks double-clicked unsigned scripts
+  ("Apple could not verify..."), with no Open button. Running things through
+  Terminal, as above, sidesteps that entirely. If you *want* the double-click
+  route: let it get blocked once, then *System Settings → Privacy & Security*
+  → scroll down → **Open Anyway**.
+* GZDoom.app itself gets the same treatment if downloaded from zdoom.org —
+  the script detects the quarantine flag and offers to clear it (that's the
+  `xattr -dr com.apple.quarantine /Applications/GZDoom.app` incantation).
+* Don't double-click the `.pk3` — it's not a document, it's cargo. GZDoom
+  loads it; the script passes it in for you.
 
 Prefer doing it by hand (or on another OS)? You need three things:
 **GZDoom**, an **IWAD** (the base game data), and this mod's **pk3**.
