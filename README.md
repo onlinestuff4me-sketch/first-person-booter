@@ -35,6 +35,25 @@ That runs `run-mac.command`, which finds GZDoom (or offers to
 data into `~/Downloads/first-person-booter/`, and launches. It asks before
 installing or changing anything.
 
+### The iteration loop (how to develop/update the mod)
+
+The launch line never changes — only the file contents behind it do. So:
+
+1. Change the mod (or have Claude change it — every push includes a freshly
+   rebuilt `dist/FirstPersonBooter.pk3`).
+2. On your machine, in the repo folder: `git pull`
+3. Relaunch GZDoom with the same `-file` parameter as always, e.g. pasted in
+   the launcher's *Additional Parameters* box (drag-and-dropping the pk3 onto
+   GZDoom.app fills it in for you):
+
+   ```
+   -file "/path/to/first-person-booter/dist/FirstPersonBooter.pk3"
+   ```
+
+Editing locally instead? Run `python3 tools/build.py` after your edits to
+refresh the pk3, then relaunch. GZDoom has no hot-reload — quit and relaunch
+to pick up changes (it takes seconds).
+
 macOS niceties to know:
 
 * Modern macOS (Sequoia+) flat-out blocks double-clicked unsigned scripts
