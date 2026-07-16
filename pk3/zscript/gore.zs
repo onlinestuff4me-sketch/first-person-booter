@@ -3,10 +3,25 @@
 //   Kick     -> extra giblet shower on top of the engine's extreme death
 //   FartGas  -> victim keels over green (suffocated)
 //   FartAcid -> corpse squashes into a bubbling goo pile (melted)
-// Also the town crier: level-start tips and per-map gib milestones.
+// Also the town crier (tips, milestones), the accountant (level stats),
+// and the windshield (screen gunk on point-blank gibs).
 class FPB_GoreHandler : EventHandler
 {
+	// per-map ledger
 	int kickGibs;
+	int gasKills;
+	int melts;
+	int doors;
+	int farts;
+	int eyes;
+	int bowled;
+
+	// screen gunk slots (written in play, read in RenderOverlay)
+	int gunkBorn[8];
+	double gunkX[8];
+	double gunkY[8];
+	double gunkS[8];
+	int gunkT[8];
 
 	static const String kTips[] = {
 		"Kick barrels. Trust the process.",
@@ -15,13 +30,14 @@ class FPB_GoreHandler : EventHandler
 		"The gas cloud lingers. So does the shame.",
 		"Melted demons cannot be resurrected. Arch-viles hate this one trick.",
 		"Duplicate cheeks convert directly into gas. That's just science.",
-		"A punted imp flies farther than a thrown one.",
+		"A punted imp can knock over his friends. Aim for the group photo.",
 		"Your own brand cannot hurt you. Others are less fortunate.",
 		"Beans are the magical fruit. The legends were true.",
 		"Bosses are too heavy to blow away. Marinate them instead.",
 		"Stepping on an eyeball is considered good luck. By us.",
 		"Gas-station sushi restores health. Do not question this.",
 		"Try 'fpb_gore 4' in the console. You didn't hear it from us.",
+		"Type 'netevent fpb_stats' in the console for your running tally.",
 		"The whole map hears every fart. This is by design. Yours."
 	};
 
@@ -35,11 +51,46 @@ class FPB_GoreHandler : EventHandler
 		"TWO HUNDRED GIBS: JANITORS OF HELL, UNIONIZE."
 	};
 
+	// Other classes report their deeds here.
+	static void Bump(Name what, int amount = 1)
+	{
+		let h = FPB_GoreHandler(EventHandler.Find("FPB_GoreHandler"));
+		if (h == null) return;
+		if (what == 'doors') h.doors += amount;
+		else if (what == 'farts') h.farts += amount;
+		else if (what == 'eyes') h.eyes += amount;
+		else if (what == 'bowled') h.bowled += amount;
+	}
+
+	String BuildCard()
+	{
+		return String.Format(
+			"\c[Gold]=== LEVEL DIGESTED ===\c-\n"
+			"Boots applied: %d    Farts fired: %d\n"
+			"Doors blown open: %d    Demons bowled: %d\n"
+			"Suffocated: %d    Melted: %d    Eyeballs squished: %d",
+			kickGibs, farts, doors, bowled, gasKills, melts, eyes);
+	}
+
 	override void WorldLoaded(WorldEvent e)
 	{
 		if (e.IsSaveGame) return;
 		Console.Printf("\c[Gold]TIP:\c- %s",
 			kTips[random[FPBTip](0, kTips.Size() - 1)]);
+	}
+
+	override void WorldUnloaded(WorldEvent e)
+	{
+		if (kickGibs + gasKills + melts + doors + farts + eyes + bowled == 0)
+			return;
+		let h = FPB_Herald(EventHandler.Find("FPB_Herald"));
+		if (h) h.card = BuildCard();
+	}
+
+	override void NetworkProcess(ConsoleEvent e)
+	{
+		if (e.Name == "fpb_stats")
+			Console.Printf("%s", BuildCard());
 	}
 
 	override void WorldThingDied(WorldEvent e)
@@ -51,6 +102,7 @@ class FPB_GoreHandler : EventHandler
 		if (dt == 'Kick')
 		{
 			BurstIntoGiblets(mo);
+			AddGunk(mo);
 			kickGibs++;
 			for (int i = 0; i < kMilestones.Size(); i++)
 			{
@@ -63,13 +115,55 @@ class FPB_GoreHandler : EventHandler
 		}
 		else if (dt == 'FartGas')
 		{
+			gasKills++;
 			mo.A_SetTranslation('PoisonSkin');
 			mo.A_StartSound("butt/choke", CHAN_VOICE);
 		}
 		else if (dt == 'FartAcid')
 		{
+			melts++;
 			let m = AcidMelter(Actor.Spawn("AcidMelter", mo.pos));
 			if (m) m.tracer = mo;
+		}
+	}
+
+	// A gib right in your face leaves evidence on the lens for a few seconds.
+	void AddGunk(Actor mo)
+	{
+		let cv = CVar.FindCVar('fpb_screengunk');
+		if (cv && cv.GetInt() == 0) return;
+		if (!playeringame[consoleplayer]) return;
+		let pmo = players[consoleplayer].mo;
+		if (pmo == null || mo.Distance3D(pmo) > 170) return;
+
+		int n = 2 + random[FPBGunk](0, 2);
+		for (int i = 0; i < n; i++)
+		{
+			int slot = random[FPBGunk](0, 7);
+			gunkBorn[slot] = max(1, level.maptime);
+			gunkX[slot] = 0.15 + random[FPBGunk](0, 100) / 142.0;
+			gunkY[slot] = 0.15 + random[FPBGunk](0, 100) / 142.0;
+			gunkS[slot] = 0.5 + random[FPBGunk](0, 100) / 100.0;
+			gunkT[slot] = random[FPBGunk](0, 1);
+		}
+	}
+
+	override void RenderOverlay(RenderEvent e)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			if (gunkBorn[i] <= 0) continue;
+			int age = level.maptime - gunkBorn[i];
+			if (age < 0 || age > 100) continue;
+			double a = 0.85 * (1.0 - age / 100.0);
+			TextureID t = TexMan.CheckForTexture(
+				gunkT[i] == 0 ? "GUNK1" : "GUNK2", TexMan.Type_Any);
+			if (!t.IsValid()) continue;
+			int size = int(Screen.GetHeight() * 0.35 * gunkS[i]);
+			Screen.DrawTexture(t, false,
+				gunkX[i] * Screen.GetWidth(), gunkY[i] * Screen.GetHeight(),
+				DTA_CenterOffset, true, DTA_Alpha, a,
+				DTA_DestWidth, size, DTA_DestHeight, size);
 		}
 	}
 
@@ -122,6 +216,95 @@ class FPB_GoreHandler : EventHandler
 				);
 			}
 		}
+	}
+}
+
+// Carries the stat card across the level change and reads it out on arrival.
+class FPB_Herald : EventHandler
+{
+	String card;
+
+	override void WorldLoaded(WorldEvent e)
+	{
+		if (e.IsSaveGame || card.Length() == 0) return;
+		Console.Printf("%s", card);
+		card = "";
+	}
+}
+
+// Rides along with a punted demon and knocks down whatever it plows into.
+// Two victims is a DOUBLE, three or more is a STRIKE.
+class FPB_BowlingWatcher : Actor
+{
+	Array<Actor> struck;
+	int life;
+
+	Default
+	{
+		+NOINTERACTION
+		+NOBLOCKMAP
+		+NOGRAVITY
+	}
+	States
+	{
+	Spawn:
+		TNT1 A -1;
+		Stop;
+	}
+
+	override void Tick()
+	{
+		Super.Tick();
+		let v = tracer;
+		life++;
+		if (v == null || life > 105)
+		{
+			Finish();
+			return;
+		}
+		double spd = v.vel.xy.Length();
+		if (spd < 6)
+		{
+			Finish();
+			return;
+		}
+		SetOrigin(v.pos, true);
+
+		BlockThingsIterator it = BlockThingsIterator.Create(v, v.radius + 24);
+		while (it.Next())
+		{
+			let mo = it.thing;
+			if (mo == null || mo == v || mo == target) continue;
+			if (!mo.bIsMonster || !mo.bShootable || mo.health <= 0) continue;
+			if (struck.Find(mo) != struck.Size()) continue;
+			if (v.Distance2D(mo) > v.radius + mo.radius + 24) continue;
+
+			struck.Push(mo);
+			double ang = v.AngleTo(mo);
+			mo.vel = (
+				mo.vel.x + cos(ang) * spd * 0.7,
+				mo.vel.y + sin(ang) * spd * 0.7,
+				mo.vel.z + 4
+			);
+			mo.DamageMobj(v, target, 45, 'Kick', DMG_THRUSTLESS);
+			mo.A_StartSound("boot/splat", CHAN_AUTO, 0, 0.8);
+		}
+	}
+
+	void Finish()
+	{
+		if (struck.Size() >= 2)
+		{
+			FPB_GoreHandler.Bump('bowled', struck.Size());
+			Console.Printf("\c[Gold]%s\c-", struck.Size() >= 3
+				? "STRIKE. THEY FELT THAT ONE IN HELL."
+				: "DOUBLE! DEMON BOWLING.");
+		}
+		else if (struck.Size() == 1)
+		{
+			FPB_GoreHandler.Bump('bowled', 1);
+		}
+		Destroy();
 	}
 }
 
@@ -249,7 +432,11 @@ class FPB_Eyeball : CustomInventory
 		EYEB A 2 A_FadeOut(0.04);
 		Wait;
 	Pickup:
-		TNT1 A 0 A_StartSound("gore/bounce", CHAN_AUTO, 0, 0.9);
+		TNT1 A 0
+		{
+			A_StartSound("gore/bounce", CHAN_AUTO, 0, 0.9);
+			FPB_GoreHandler.Bump('eyes');
+		}
 		Stop;
 	}
 }

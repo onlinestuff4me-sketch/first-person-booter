@@ -85,6 +85,17 @@ class Boot : Weapon
 					victim.vel.y + sin(ang) * push,
 					victim.vel.z + push * 0.4
 				);
+				// a demon in flight is a bowling ball with feelings
+				if (victim.bIsMonster)
+				{
+					let w = FPB_BowlingWatcher(
+						Spawn("FPB_BowlingWatcher", victim.pos));
+					if (w)
+					{
+						w.tracer = victim;
+						w.target = self;
+					}
+				}
 			}
 		}
 	}

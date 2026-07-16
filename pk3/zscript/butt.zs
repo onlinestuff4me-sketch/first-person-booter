@@ -75,6 +75,7 @@ class CheeksOfDoom : Weapon
 		{
 			A_StartSound("butt/fart", CHAN_WEAPON);
 			A_FireProjectile("GasCloud", frandom[FPBFart](-2, 2), true, 0, -14);
+			FPB_GoreHandler.Bump('farts');
 			A_AlertMonsters();
 			A_Quake(1, 4, 0, 128);
 			let cv = CVar.FindCVar('fpb_fartjump');
@@ -100,6 +101,7 @@ class CheeksOfDoom : Weapon
 		invoker.DepleteAmmo(invoker.bAltFire, true);
 
 		A_StartSound("butt/mega", CHAN_WEAPON);
+		FPB_GoreHandler.Bump('farts');
 		A_AlertMonsters();
 		A_Quake(4, 18, 0, 512);
 
@@ -197,6 +199,7 @@ class GasCloud : Actor
 		case 203: case 206:                             // Generic_Lift, Plat_DownWaitUpStayLip
 			level.ExecuteSpecial(l.special, target, l, false,
 				l.args[0], l.args[1], l.args[2], l.args[3], l.args[4]);
+			FPB_GoreHandler.Bump('doors');
 			break;
 		default:
 			break;

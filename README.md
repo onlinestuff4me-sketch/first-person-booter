@@ -206,10 +206,40 @@ tools/                generators, builder, checker, previewer
   (yes, it can catch you; stand back from your fireworks).
 * Most gibbings launch a lone **eyeball**. It comes to rest. It stares.
   Walk over it to squish it. You'll get a message. You'll deserve it.
+* **Demon bowling**: a punted demon knocks down whatever it plows into.
+  Two victims is a DOUBLE, three or more is a STRIKE. The announcer cares.
+* **Windshield effect**: gib something point-blank and it ends up on your
+  lens for a few seconds (`fpb_screengunk 0` to squeegee it off forever).
+* Point-blank gibs aside, there's a running **ledger**: an end-of-level stat
+  card (boots applied, farts fired, doors blown, demons bowled, suffocated,
+  melted, eyeballs squished) prints as the next map loads — or on demand
+  with `netevent fpb_stats` in the console.
 * Random **tip of the day** on every level start, per-map **gib milestone
   titles** (5 / 15 / 30 / 60 / 100 / 200 kicks), randomized pickup
   one-liners, a baker's dozen quit-screen sendoffs, and — while the cheeks
   are equipped — occasional idle emissions (`fpb_leaky 0` to plug them).
+
+### The Proving Rounds (test arena)
+
+Console (`~`): `map buttest`. A purpose-built playground: monsters and
+barrels to kick, one of every pickup on the north shelf, a practice door on
+the west side, and a **destructible wall** sealing a loot bunker to the
+north — fart it (or kick it) until it gives way. This is the literal
+"blows through walls" demo. Exit switch on the east wall.
+
+### The Cheeky Mug (optional addon)
+
+`dist/FPB_CheekyMug.pk3` replaces the status-bar face with a small pair of
+cheeks that reacts like the original: looks around idly, bruises as you take
+damage, puckers on big hits, smirks at new weapons, clenches on a rampage,
+goes gold when invulnerable, deflates when dead. Load it as an extra file:
+
+```
+-file ".../FirstPersonBooter.pk3" ".../FPB_CheekyMug.pk3"
+```
+
+Don't like being mooned by your own HUD? Remove it from the line. That's
+the whole uninstall.
 
 ### Settings (console cvars)
 
@@ -219,6 +249,7 @@ tools/                generators, builder, checker, previewer
 | `fpb_fartjump` | `true` | fart recoil + Thunderclap launch |
 | `fpb_gore` | `3` | giblet multiplier, `0` (off) – `4` (deli counter) |
 | `fpb_leaky` | `true` | idle emissions while cheeks are equipped |
+| `fpb_screengunk` | `true` | point-blank gibs splatter the screen briefly |
 
 ---
 

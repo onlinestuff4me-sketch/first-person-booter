@@ -448,6 +448,28 @@ def gen_splats():
         save(img, GFX, f"FSPLAT{i}", 32, 32)
 
 
+def gen_screen_gunk():
+    """Big soft red splats drawn over the view when a gib lands on the lens."""
+    for i in (1, 2):
+        S = 160
+        img, d = canvas(S, S)
+        rng = random.Random(200 + i)
+        c = S / 2
+        blob(d, c, c, S * 0.26, (110, 14, 10, 150), rng, lumps=12, wobble=0.5)
+        blob(d, c, c, S * 0.18, (140, 22, 14, 170), rng, lumps=10, wobble=0.45)
+        for _ in range(8):  # runny streaks, mostly downward
+            a = rng.uniform(0.15 * math.pi, 0.85 * math.pi)
+            L = rng.uniform(S * 0.2, S * 0.42)
+            x1, y1 = c + L * math.cos(a), c + L * math.sin(a)
+            d.line([c, c, x1, y1], fill=(120, 16, 12, 140),
+                   width=rng.randint(4, 9))
+            r = rng.uniform(3, 7)
+            d.ellipse([x1 - r, y1 - r, x1 + r, y1 + r],
+                      fill=(120, 16, 12, 150))
+        blob(d, c - 8, c - 10, S * 0.08, (185, 45, 30, 160), rng)
+        save(img, GFX, f"GUNK{i}", 80, 80)
+
+
 if __name__ == "__main__":
     print("Generating sprites...")
     gen_boot()
@@ -465,4 +487,5 @@ if __name__ == "__main__":
     gen_sushi()
     gen_butt_pickup()
     gen_splats()
+    gen_screen_gunk()
     print("Done.")
