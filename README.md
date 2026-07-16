@@ -208,6 +208,17 @@ tools/                generators, builder, checker, previewer
   Walk over it to squish it. You'll get a message. You'll deserve it.
 * **Demon bowling**: a punted demon knocks down whatever it plows into.
   Two victims is a DOUBLE, three or more is a STRIKE. The announcer cares.
+* **Chili cook-off**: chili pots are now shootable. Damage one — your farts,
+  a kick, or a demon's stray fireball all count — and it detonates into a
+  poison cloud, shrapnel, and a chain reaction of any pots nearby. Every
+  ammo room is a minefield. Eat responsibly and quickly.
+* **Eyeball punting**: kick with no enemy in range and any eyeball in front
+  of you goes downfield, squeaking. Tracked separately on the stat card,
+  because it matters.
+* **Full presentation**: original title screen, menu logo, credits page,
+  intermission backdrop, five renamed heat levels (*Baby's First Toot* up
+  to *GHOST PEPPER. NO REFUNDS.*), and new between-level story text
+  explaining what the gas main has to do with all this.
 * **Windshield effect**: gib something point-blank and it ends up on your
   lens for a few seconds (`fpb_screengunk 0` to squeegee it off forever).
 * Point-blank gibs aside, there's a running **ledger**: an end-of-level stat

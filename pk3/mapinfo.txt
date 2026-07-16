@@ -25,3 +25,140 @@ map BUTTEST "The Proving Rounds"
 	music = "D_RUNNIN"
 	NoIntermission
 }
+
+// Heat levels. Mechanics mirror the classic five; the menu is ours.
+ClearSkills
+
+skill baby
+{
+	Name = "Baby's First Toot"
+	AmmoFactor = 2
+	DamageFactor = 0.5
+	AutoUseHealth
+	EasyBossBrain
+	SpawnFilter = Baby
+	Key = "b"
+}
+
+skill easy
+{
+	Name = "Mild Salsa"
+	SpawnFilter = Easy
+	Key = "m"
+}
+
+skill normal
+{
+	Name = "Regular Chili"
+	SpawnFilter = Normal
+	Key = "r"
+	DefaultSkill
+}
+
+skill hard
+{
+	Name = "Five-Alarm"
+	SpawnFilter = Hard
+	Key = "f"
+}
+
+skill nightmare
+{
+	Name = "GHOST PEPPER. NO REFUNDS."
+	AmmoFactor = 2
+	FastMonsters
+	RespawnTime = 12
+	SpawnFilter = Nightmare
+	Key = "g"
+	MustConfirm = "the label says no refunds.\nthe label is serious.\n\npress y to sign the waiver."
+}
+
+// The story so far, as told between levels. Same beats, new plumbing.
+cluster 5
+{
+	flat = "FLOOR4_8"
+	music = "D_READ_M"
+	exittext = "the surface station is quiet now. mostly",
+		"because everything in it is a fine red mist.",
+		"",
+		"maintenance logs show the invasion started",
+		"in sub-basement 3, right where the gas main",
+		"meets the sewage line. of course it did.",
+		"",
+		"you tighten your laces. somewhere below,",
+		"something enormous just heard your stomach",
+		"growl. it should be afraid."
+}
+
+cluster 6
+{
+	flat = "FLOOR4_8"
+	music = "D_READ_M"
+	exittext = "the city is a buffet of regret. burning",
+		"storefronts. abandoned chili carts. thousands",
+		"of cans of beans, unguarded.",
+		"",
+		"you stock up. for the mission. strictly",
+		"for the mission.",
+		"",
+		"the demons have started posting guards",
+		"downwind. it will not help them."
+}
+
+cluster 7
+{
+	flat = "FLOOR4_8"
+	music = "D_READ_M"
+	exittext = "halfway home. your boot has personally",
+		"redecorated six city blocks.",
+		"",
+		"the resistance radio crackles: 'whatever",
+		"you are doing out there... we can smell it",
+		"from the bunker. carry on, soldier.'",
+		"",
+		"you crack a window that is not there.",
+		"onward."
+}
+
+cluster 8
+{
+	flat = "FLOOR4_8"
+	music = "D_READ_M"
+	exittext = "the big one inhaled at exactly the wrong",
+		"moment.",
+		"",
+		"as the smoke clears and the last demon melts",
+		"into a carpet stain, you finally understand:",
+		"hell was not invading earth. hell was trying",
+		"to EVACUATE.",
+		"",
+		"you rest your leg on the smoldering throne.",
+		"earth is saved. earth is also unrentable",
+		"for six to eight years.",
+		"",
+		"worth it."
+}
+
+cluster 9
+{
+	flat = "FLOOR4_8"
+	music = "D_READ_M"
+	entertext = "a hidden vault. the sign reads:",
+		"",
+		"'EMERGENCY BEAN RESERVE.",
+		"AUTHORIZED PERSONNEL ONLY.'",
+		"",
+		"you have never been more authorized."
+}
+
+cluster 10
+{
+	flat = "FLOOR4_8"
+	music = "D_READ_M"
+	entertext = "behind the reserve, a smaller door.",
+		"a warning, scratched in claw marks:",
+		"",
+		"'THE FIRST TOOTER SLEEPS HERE.'",
+		"",
+		"pay your respects."
+}

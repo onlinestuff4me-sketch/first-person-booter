@@ -21,3 +21,4 @@ butt/leak          LEAK
 gas/hiss           GASHISS
 goo/melt           SIZZLE
 goo/bubble         GOOBLUB
+gore/eyesqueak     EYESQK

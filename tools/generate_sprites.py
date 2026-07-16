@@ -428,6 +428,197 @@ def gen_butt_pickup():
         save(img, SPR, f"BUPK{letter}0", 23, 46)
 
 
+# -------------------------------------------------------------- pixel font --
+
+FONT = {
+    "A": ["01110", "10001", "10001", "11111", "10001", "10001", "10001"],
+    "B": ["11110", "10001", "10001", "11110", "10001", "10001", "11110"],
+    "C": ["01111", "10000", "10000", "10000", "10000", "10000", "01111"],
+    "D": ["11110", "10001", "10001", "10001", "10001", "10001", "11110"],
+    "E": ["11111", "10000", "10000", "11110", "10000", "10000", "11111"],
+    "F": ["11111", "10000", "10000", "11110", "10000", "10000", "10000"],
+    "G": ["01111", "10000", "10000", "10111", "10001", "10001", "01110"],
+    "H": ["10001", "10001", "10001", "11111", "10001", "10001", "10001"],
+    "I": ["11111", "00100", "00100", "00100", "00100", "00100", "11111"],
+    "J": ["00111", "00010", "00010", "00010", "00010", "10010", "01100"],
+    "K": ["10001", "10010", "10100", "11000", "10100", "10010", "10001"],
+    "L": ["10000", "10000", "10000", "10000", "10000", "10000", "11111"],
+    "M": ["10001", "11011", "10101", "10101", "10001", "10001", "10001"],
+    "N": ["10001", "11001", "10101", "10011", "10001", "10001", "10001"],
+    "O": ["01110", "10001", "10001", "10001", "10001", "10001", "01110"],
+    "P": ["11110", "10001", "10001", "11110", "10000", "10000", "10000"],
+    "Q": ["01110", "10001", "10001", "10001", "10101", "10010", "01101"],
+    "R": ["11110", "10001", "10001", "11110", "10100", "10010", "10001"],
+    "S": ["01111", "10000", "10000", "01110", "00001", "00001", "11110"],
+    "T": ["11111", "00100", "00100", "00100", "00100", "00100", "00100"],
+    "U": ["10001", "10001", "10001", "10001", "10001", "10001", "01110"],
+    "V": ["10001", "10001", "10001", "10001", "10001", "01010", "00100"],
+    "W": ["10001", "10001", "10001", "10101", "10101", "11011", "10001"],
+    "X": ["10001", "10001", "01010", "00100", "01010", "10001", "10001"],
+    "Y": ["10001", "10001", "01010", "00100", "00100", "00100", "00100"],
+    "Z": ["11111", "00001", "00010", "00100", "01000", "10000", "11111"],
+    "0": ["01110", "10001", "10011", "10101", "11001", "10001", "01110"],
+    "1": ["00100", "01100", "00100", "00100", "00100", "00100", "01110"],
+    "2": ["01110", "10001", "00001", "00110", "01000", "10000", "11111"],
+    "3": ["11110", "00001", "00001", "01110", "00001", "00001", "11110"],
+    "4": ["00010", "00110", "01010", "10010", "11111", "00010", "00010"],
+    "5": ["11111", "10000", "11110", "00001", "00001", "10001", "01110"],
+    "6": ["01110", "10000", "10000", "11110", "10001", "10001", "01110"],
+    "7": ["11111", "00001", "00010", "00100", "01000", "01000", "01000"],
+    "8": ["01110", "10001", "10001", "01110", "10001", "10001", "01110"],
+    "9": ["01110", "10001", "10001", "01111", "00001", "00001", "01110"],
+    "-": ["00000", "00000", "00000", "11111", "00000", "00000", "00000"],
+    ".": ["00000", "00000", "00000", "00000", "00000", "01100", "01100"],
+    ",": ["00000", "00000", "00000", "00000", "00110", "00110", "01100"],
+    ":": ["00000", "01100", "01100", "00000", "01100", "01100", "00000"],
+    "!": ["00100", "00100", "00100", "00100", "00100", "00000", "00100"],
+    "'": ["00110", "00110", "01100", "00000", "00000", "00000", "00000"],
+    " ": ["00000", "00000", "00000", "00000", "00000", "00000", "00000"],
+}
+
+
+def text_size(text, scale):
+    return (len(text) * 6 - 1) * scale, 7 * scale
+
+
+def draw_text(d, text, x, y, scale, top_col, bot_col=None, outline=(0, 0, 0, 255)):
+    """Chunky 5x7 caps with a vertical gradient and a fat outline."""
+    bot_col = bot_col or top_col
+    for pass_outline in (True, False):
+        cx = x
+        for ch in text.upper():
+            glyph = FONT.get(ch, FONT[" "])
+            for row, bits in enumerate(glyph):
+                t = row / 6.0
+                col = tuple(int(a + (b - a) * t)
+                            for a, b in zip(top_col, bot_col))
+                for c, bit in enumerate(bits):
+                    if bit != "1":
+                        continue
+                    px = cx + c * scale
+                    py = y + row * scale
+                    if pass_outline:
+                        d.rectangle([px - scale // 3 - 1, py - scale // 3 - 1,
+                                     px + scale + scale // 3,
+                                     py + scale + scale // 3], fill=outline)
+                    else:
+                        d.rectangle([px, py, px + scale - 1, py + scale - 1],
+                                    fill=col)
+            cx += 6 * scale
+
+
+def draw_text_centered(d, text, cx, y, scale, top_col, bot_col=None):
+    w, _ = text_size(text, scale)
+    draw_text(d, text, cx - w // 2, y, scale, top_col, bot_col)
+
+
+# ------------------------------------------------------------ big pictures --
+
+GOLD_TOP = (255, 224, 120, 255)
+GOLD_BOT = (196, 84, 24, 255)
+BONE = (210, 200, 185, 255)
+
+
+def hellscape(w, h, seed=7):
+    """Shared moody backdrop: gradient sky, sickly glow, jagged horizon."""
+    img = Image.new("RGBA", (w, h), (0, 0, 0, 255))
+    d = ImageDraw.Draw(img)
+    for y in range(h):
+        t = y / h
+        d.line([0, y, w, y], fill=(int(14 + 46 * t), int(8 + 10 * t),
+                                   int(12 + 12 * t), 255))
+    d.ellipse([-w * 0.2, h * 0.55, w * 1.2, h * 1.5],
+              fill=(66, 22, 14, 255))
+    d.ellipse([w * 0.1, h * 0.68, w * 0.9, h * 1.4], fill=(96, 30, 16, 255))
+    rng = random.Random(seed)
+    pts = [(0, h)]
+    x = 0
+    while x < w:
+        x += rng.randint(30, 90)
+        pts.append((x, h - rng.randint(int(h * 0.06), int(h * 0.22))))
+    pts += [(w, h)]
+    d.polygon(pts, fill=(8, 5, 6, 255))
+    for _ in range(6):  # rising wisps
+        wx = rng.randint(int(w * 0.1), int(w * 0.9))
+        stink_lines(d, wx, rng.randint(int(h * 0.5), int(h * 0.75)),
+                    rng.randint(30, 60), (120, 180, 90, 90), n=1, width=4)
+    return img, d
+
+
+def gen_titlepic():
+    W, H = 640, 400
+    img, d = hellscape(W, H)
+    # the instruments, flanking
+    boot = draw_side_boot().rotate(-24, expand=True, resample=Image.BICUBIC)
+    boot = boot.resize((int(boot.width * 1.05), int(boot.height * 1.05)),
+                       Image.BICUBIC)
+    img.alpha_composite(boot, (14, 208))
+    ch = Image.new("RGBA", (240, 160), (0, 0, 0, 0))
+    cd = ImageDraw.Draw(ch)
+    draw_cheek(cd, 62, 30, 118, 120)
+    draw_cheek(cd, 172, 30, 118, 120)
+    cd.line([117, 52, 117, 150], fill=SKIN_LINE, width=7)
+    img.alpha_composite(ch, (400, 230))
+    star(d, 520, 226, 10, 26, 10, fill=(190, 240, 120, 150))
+    # the name
+    draw_text_centered(d, "FIRST-PERSON", W // 2, 46, 5,
+                       (235, 225, 205, 255), (150, 135, 120, 255))
+    draw_text_centered(d, "BOOTER", W // 2, 106, 14, GOLD_TOP, GOLD_BOT)
+    draw_text_centered(d, "THE ONLY GUNS ARE YOUR LEG AND YOUR LUNCH.",
+                       W // 2, 322, 2, (170, 200, 140, 255))
+    draw_text_centered(d, "A GZDOOM MOD", W // 2, 368, 2,
+                       (120, 105, 95, 255))
+    save(img, GFX, "TITLEPIC", 0, 0)
+
+
+def gen_interpic():
+    W, H = 640, 400
+    img, d = hellscape(W, H, seed=21)
+    # a faint, enormous boot print to tally your sins over
+    sole = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    sd = ImageDraw.Draw(sole)
+    sd.rounded_rectangle([220, 60, 420, 330], radius=80, fill=(30, 16, 12, 160))
+    for y in range(96, 240, 34):
+        sd.rounded_rectangle([244, y, 396, y + 16], radius=8,
+                             fill=(16, 9, 7, 160))
+    sd.rounded_rectangle([250, 260, 390, 316], radius=12, fill=(16, 9, 7, 160))
+    img.alpha_composite(sole)
+    save(img, GFX, "INTERPIC", 0, 0)
+
+
+def gen_credit():
+    W, H = 640, 400
+    img, d = hellscape(W, H, seed=33)
+    d.rectangle([40, 30, W - 40, H - 30], fill=(10, 7, 8, 210))
+    draw_text_centered(d, "FIRST-PERSON BOOTER", W // 2, 52, 4,
+                       GOLD_TOP, GOLD_BOT)
+    lines = [
+        "CODE, ART AND AUDIO: GENERATED FROM SCRATCH",
+        "ASSETS ARE CC0. TAKE THEM. REMIX LOUDLY.",
+        "",
+        "ENGINE: GZDOOM, BY THE ZDOOM TEAM",
+        "GAME DATA: THE FREEDOOM PROJECT",
+        "",
+        "NO DEMONS WERE HARMED.",
+        "ALL DEMONS WERE HARMED.",
+    ]
+    y = 130
+    for ln in lines:
+        if ln:
+            draw_text_centered(d, ln, W // 2, y, 2, BONE)
+        y += 28
+    save(img, GFX, "CREDIT", 0, 0)
+
+
+def gen_menu_logo():
+    img, dd = canvas(250, 44)
+    boot = draw_side_boot().rotate(-20, expand=True, resample=Image.BICUBIC)
+    boot = boot.resize((44, int(44 * boot.height / boot.width)), Image.BICUBIC)
+    img.alpha_composite(boot, (0, 2))
+    draw_text(dd, "BOOTER", 52, 4, 5, GOLD_TOP, GOLD_BOT)
+    save(img, GFX, "M_DOOM", 0, 0)
+
+
 # ------------------------------------------------------------------ decals --
 
 def gen_splats():
@@ -488,4 +679,8 @@ if __name__ == "__main__":
     gen_butt_pickup()
     gen_splats()
     gen_screen_gunk()
+    gen_titlepic()
+    gen_interpic()
+    gen_credit()
+    gen_menu_logo()
     print("Done.")

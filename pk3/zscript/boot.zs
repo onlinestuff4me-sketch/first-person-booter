@@ -98,6 +98,24 @@ class Boot : Weapon
 				}
 			}
 		}
+		else
+		{
+			// Kicked nothing meaty. Any sports equipment lying around?
+			BlockThingsIterator it = BlockThingsIterator.Create(self, 96);
+			while (it.Next())
+			{
+				let eye = FPB_Eyeball(it.thing);
+				if (eye == null) continue;
+				double dist = Distance2D(eye);
+				if (dist > 80) continue;
+				if (dist > 24 && AbsAngle(ang, AngleTo(eye)) > 50) continue;
+				eye.vel = (cos(ang) * 18 * power, sin(ang) * 18 * power,
+					7 + 3 * power);
+				eye.A_StartSound("gore/eyesqueak", CHAN_BODY);
+				FPB_GoreHandler.Bump('eyepunts');
+				break;   // one per kick; this is a game of precision
+			}
+		}
 	}
 }
 

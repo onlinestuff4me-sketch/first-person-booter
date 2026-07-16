@@ -15,6 +15,7 @@ class FPB_GoreHandler : EventHandler
 	int farts;
 	int eyes;
 	int bowled;
+	int eyepunts;
 
 	// screen gunk slots (written in play, read in RenderOverlay)
 	int gunkBorn[8];
@@ -60,6 +61,7 @@ class FPB_GoreHandler : EventHandler
 		else if (what == 'farts') h.farts += amount;
 		else if (what == 'eyes') h.eyes += amount;
 		else if (what == 'bowled') h.bowled += amount;
+		else if (what == 'eyepunts') h.eyepunts += amount;
 	}
 
 	String BuildCard()
@@ -68,8 +70,9 @@ class FPB_GoreHandler : EventHandler
 			"\c[Gold]=== LEVEL DIGESTED ===\c-\n"
 			"Boots applied: %d    Farts fired: %d\n"
 			"Doors blown open: %d    Demons bowled: %d\n"
-			"Suffocated: %d    Melted: %d    Eyeballs squished: %d",
-			kickGibs, farts, doors, bowled, gasKills, melts, eyes);
+			"Suffocated: %d    Melted: %d\n"
+			"Eyeballs squished: %d    Eyeballs punted: %d",
+			kickGibs, farts, doors, bowled, gasKills, melts, eyes, eyepunts);
 	}
 
 	override void WorldLoaded(WorldEvent e)
@@ -81,7 +84,8 @@ class FPB_GoreHandler : EventHandler
 
 	override void WorldUnloaded(WorldEvent e)
 	{
-		if (kickGibs + gasKills + melts + doors + farts + eyes + bowled == 0)
+		if (kickGibs + gasKills + melts + doors + farts + eyes + bowled
+			+ eyepunts == 0)
 			return;
 		let h = FPB_Herald(EventHandler.Find("FPB_Herald"));
 		if (h) h.card = BuildCard();
@@ -399,7 +403,8 @@ class FPB_BloodPool : Actor
 	}
 }
 
-// It rolls free, it comes to rest, it stares. Walk over it to squish it.
+// It rolls free, it comes to rest, it stares. Walk over it to squish it —
+// or kick it (with nothing else in range) to send it downfield, squeaking.
 class FPB_Eyeball : CustomInventory
 {
 	Default
@@ -408,6 +413,9 @@ class FPB_Eyeball : CustomInventory
 		Height 8;
 		+DROPOFF
 		Scale 0.9;
+		BounceType "Doom";
+		BounceFactor 0.65;
+		BounceSound "gore/bounce";
 	}
 
 	static const String kSquish[] = {

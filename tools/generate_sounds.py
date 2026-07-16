@@ -209,6 +209,15 @@ def leak(dur=0.3, seed=88):
     return np.tanh(1.8 * np.sin(2 * np.pi * np.cumsum(f) / SR)) * flut * env * 0.5
 
 
+def eyesqueak(dur=0.18, seed=99):
+    """Punted-eyeball flight noise: a small indignant rising squeak."""
+    n = int(SR * dur)
+    t = np.arange(n) / SR
+    f = 620 + 1400 * (t / dur) + 70 * np.sin(2 * np.pi * 36 * t)
+    env = np.sin(np.pi * np.linspace(0, 1, n)) ** 0.8
+    return np.tanh(1.6 * np.sin(2 * np.pi * np.cumsum(f) / SR)) * env
+
+
 def bubbles(seed=77):
     n = int(SR * 0.3)
     sig = np.zeros(n)
@@ -243,4 +252,5 @@ if __name__ == "__main__":
     write("GASHISS", hiss_loop())
     write("SIZZLE", sizzle())
     write("GOOBLUB", bubbles())
+    write("EYESQK", eyesqueak())
     print("Done.")

@@ -45,13 +45,20 @@ class Beans : Gas replaces Clip
 class Beans2 : Beans replaces Shell {}
 class Beans3 : Beans replaces RocketAmmo {}
 
-// Big ammo -> five-alarm chili.
+// Big ammo -> five-alarm chili. Eat it for gas... or damage it and it
+// COOKS OFF: a pop, a poison cloud, shrapnel, and any pots nearby join in.
+// Every ammo room is now a minefield. Monsters' stray shots count.
 class ChiliPot : Gas replaces Cell
 {
 	Default
 	{
 		Inventory.Amount 25;
 		Tag "Chili Pot";
+		Health 15;
+		Mass 45;
+		+SHOOTABLE
+		+NOBLOOD
+		+NOTAUTOAIMED
 	}
 
 	static const String kMsgs[] = {
@@ -71,6 +78,34 @@ class ChiliPot : Gas replaces Cell
 	Spawn:
 		CHLI A -1;
 		Stop;
+	Death:
+		TNT1 A 0 CookOff(24, 96, 1);
+		KPUF B 4 Bright;
+		Stop;
+	}
+
+	void CookOff(int boom, int radius, int clouds)
+	{
+		bSpecial = false;   // no longer edible, regrettably
+		A_StartSound("butt/pop", CHAN_BODY);
+		A_StartSound("goo/melt", CHAN_AUTO, 0, 0.6);
+		for (int i = 0; i < clouds; i++)
+		{
+			let pc = Spawn("StinkCloud", pos + (i * 24 - (clouds - 1) * 12, 0, 8));
+			if (pc) pc.target = target;
+		}
+		A_Explode(boom, radius);
+		for (int i = 0; i < 4; i++)
+		{
+			let shard = Spawn("MeatChunk", pos + (0, 0, 12));
+			if (shard == null) continue;
+			shard.vel = (
+				random[FPBChili](-80, 80) / 16.0,
+				random[FPBChili](-80, 80) / 16.0,
+				random[FPBChili](30, 90) / 14.0
+			);
+			shard.scale = (0.5, 0.5);
+		}
 	}
 }
 class ChiliPot2 : ChiliPot replaces ClipBox {}
@@ -84,10 +119,19 @@ class ChiliCauldron : ChiliPot replaces CellPack
 		Inventory.Amount 60;
 		Tag "Chili Cauldron";
 		Scale 1.4;
+		Health 30;
 	}
 	override String PickupMessage()
 	{
 		return "The Cauldron of Regret. Gas +60.";
+	}
+	States
+	{
+	Death:
+		TNT1 A 0 CookOff(48, 150, 2);
+		KPUF A 5 Bright;
+		KPUF B 4 Bright;
+		Stop;
 	}
 }
 
