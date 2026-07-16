@@ -17,7 +17,8 @@ ROWS = [
                                  "PGASA0", "PGASC0"], 0.8),
     ("Blast ring / kick puff", ["FBLSA0", "FBLSB0", "FBLSC0",
                                 "KPUFA0", "KPUFB0"], 0.7),
-    ("Gore & goo", ["GIBSA0", "GIBSB0", "GIBSE0", "GOOPA0", "GOOPC0"], 1.0),
+    ("Gore & goo", ["GIBSA0", "GIBSB0", "GIBSE0", "EYEBA0", "BPOLA0",
+                    "GOOPA0", "GOOPC0"], 1.0),
     ("Pickups", ["BUPKA0", "BEANA0", "CHLIA0", "MBNSA0"], 1.6),
 ]
 

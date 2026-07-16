@@ -17,9 +17,24 @@ class Beans : Gas replaces Clip
 	Default
 	{
 		Inventory.Amount 10;
-		Inventory.PickupMessage "Beans. The magical fruit.";
 		Tag "Beans";
 	}
+
+	static const String kMsgs[] = {
+		"Beans. The magical fruit.",
+		"Cold beans. A delicacy.",
+		"You eat the beans immediately. No regrets yet.",
+		"Fuel for the engine of justice.",
+		"These expired in 1994. Bonus potency.",
+		"Straight into the tank.",
+		"The label just says 'BEANS'. Good enough.",
+		"Found next to a corpse. Waste not."
+	};
+	override String PickupMessage()
+	{
+		return kMsgs[random[FPBMsg](0, kMsgs.Size() - 1)];
+	}
+
 	States
 	{
 	Spawn:
@@ -36,9 +51,21 @@ class ChiliPot : Gas replaces Cell
 	Default
 	{
 		Inventory.Amount 25;
-		Inventory.PickupMessage "Five-alarm chili. Handle with care.";
 		Tag "Chili Pot";
 	}
+
+	static const String kMsgs[] = {
+		"Five-alarm chili. Handle with care.",
+		"The recipe is classified. The effects are not.",
+		"It's still bubbling. Excellent.",
+		"Tastes like victory, then regret, then victory again.",
+		"The pot whispers: 'later.'"
+	};
+	override String PickupMessage()
+	{
+		return kMsgs[random[FPBMsg](0, kMsgs.Size() - 1)];
+	}
+
 	States
 	{
 	Spawn:
@@ -55,9 +82,12 @@ class ChiliCauldron : ChiliPot replaces CellPack
 	Default
 	{
 		Inventory.Amount 60;
-		Inventory.PickupMessage "The Cauldron of Regret. Gas +60.";
 		Tag "Chili Cauldron";
 		Scale 1.4;
+	}
+	override String PickupMessage()
+	{
+		return "The Cauldron of Regret. Gas +60.";
 	}
 }
 

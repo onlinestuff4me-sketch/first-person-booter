@@ -199,6 +199,16 @@ def sizzle(dur=0.9, seed=66):
     return (crackle + base) * np.exp(-t * 3.2)
 
 
+def leak(dur=0.3, seed=88):
+    """The quiet betrayal: a small, apologetic squeak."""
+    n = int(SR * dur)
+    t = np.arange(n) / SR
+    f = 430 - 260 * t / dur
+    flut = 0.6 + 0.4 * np.sin(2 * np.pi * 21 * t)
+    env = np.sin(np.pi * np.linspace(0, 1, n)) ** 1.6
+    return np.tanh(1.8 * np.sin(2 * np.pi * np.cumsum(f) / SR)) * flut * env * 0.5
+
+
 def bubbles(seed=77):
     n = int(SR * 0.3)
     sig = np.zeros(n)
@@ -222,6 +232,10 @@ if __name__ == "__main__":
     write("FART1", fart(0.5, 92, seed=101, sputter=0.5))
     write("FART2", fart(0.72, 76, seed=202, sputter=0.75, squeak=True))
     write("FART3", fart(0.38, 108, seed=303, sputter=0.3))
+    write("FART4", fart(0.3, 150, seed=505, sputter=0.2, squeak=True))
+    write("FART5", fart(0.85, 88, seed=606, sputter=1.4))
+    write("FARTPOP", fart(0.18, 170, seed=707, sputter=0.1))
+    write("LEAK", leak())
     write("MEGAFART", echo(fart(1.6, 46, seed=404, sputter=0.85, sub=0.5)))
     write("INHALE", inhale())
     write("CHOKE", choke())

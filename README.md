@@ -199,13 +199,26 @@ tools/                generators, builder, checker, previewer
   threshold on lethal hits), so you get the authentic XDeath animations plus
   our extra meat confetti on top.
 
+### The little details
+
+* Gibbed enemies leave spreading blood pools, chunks smear the walls, and
+  ~1 in 6 chunks still has gas in it — it pops with a toot and splash damage
+  (yes, it can catch you; stand back from your fireworks).
+* Most gibbings launch a lone **eyeball**. It comes to rest. It stares.
+  Walk over it to squish it. You'll get a message. You'll deserve it.
+* Random **tip of the day** on every level start, per-map **gib milestone
+  titles** (5 / 15 / 30 / 60 / 100 / 200 kicks), randomized pickup
+  one-liners, a baker's dozen quit-screen sendoffs, and — while the cheeks
+  are equipped — occasional idle emissions (`fpb_leaky 0` to plug them).
+
 ### Settings (console cvars)
 
 | CVar | Default | Meaning |
 |---|---|---|
 | `fpb_doorfarts` | `true` | gas impacts activate doors/lifts |
 | `fpb_fartjump` | `true` | fart recoil + Thunderclap launch |
-| `fpb_gore` | `2` | giblet multiplier, `0` (off) – `4` (deli counter) |
+| `fpb_gore` | `3` | giblet multiplier, `0` (off) – `4` (deli counter) |
+| `fpb_leaky` | `true` | idle emissions while cheeks are equipped |
 
 ---
 

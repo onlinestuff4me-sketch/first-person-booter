@@ -8,11 +8,15 @@ gore/bounce        SQUISH
 butt/fart1         FART1
 butt/fart2         FART2
 butt/fart3         FART3
-$random butt/fart  { butt/fart1  butt/fart2  butt/fart3 }
+butt/fart4         FART4
+butt/fart5         FART5
+$random butt/fart  { butt/fart1  butt/fart2  butt/fart3  butt/fart4  butt/fart5 }
 butt/mega          MEGAFART
 butt/inhale        INHALE
 butt/choke         CHOKE
 butt/pickup        CHEEKS
+butt/pop           FARTPOP
+butt/leak          LEAK
 
 gas/hiss           GASHISS
 goo/melt           SIZZLE

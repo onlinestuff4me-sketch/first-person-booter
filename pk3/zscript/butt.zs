@@ -54,7 +54,14 @@ class CheeksOfDoom : Weapon
 		BUPK B 6 Bright;
 		Loop;
 	Ready:
-		BUTT A 1 A_WeaponReady;
+		BUTT A 1
+		{
+			A_WeaponReady();
+			// Idle leakage. Purely cosmetic. Mostly. Toggle: fpb_leaky.
+			let cv = CVar.FindCVar('fpb_leaky');
+			if ((cv == null || cv.GetInt() != 0) && random[FPBLeak](0, 899) == 0)
+				A_StartSound("butt/leak", CHAN_7, 0, 0.35);
+		}
 		Loop;
 	Deselect:
 		BUTT A 1 A_Lower(14);

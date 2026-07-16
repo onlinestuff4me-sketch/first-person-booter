@@ -315,22 +315,48 @@ def gen_gibs():
     save(img, SPR, "GIBSE0", 15, 11)
 
 
-def gen_goo():
+def puddle(prefix, base, rim, inner, bub, bub_hi, seed0, bubbles=4):
     for i, letter in enumerate("ABC"):
         w, h = 90 + i * 8, 66 + i * 4
         img, d = canvas(w, h)
-        rng = random.Random(31 + i)
-        blob(d, w / 2, h / 2, min(w, h) * 0.44, (63, 178, 63, 220), rng,
-             lumps=10, wobble=0.3, outline=(42, 100, 28, 255), width=4)
-        blob(d, w / 2, h / 2, min(w, h) * 0.28, (110, 210, 100, 220), rng)
-        for _ in range(4):  # bubbles
+        rng = random.Random(seed0 + i)
+        blob(d, w / 2, h / 2, min(w, h) * 0.44, base, rng,
+             lumps=10, wobble=0.3, outline=rim, width=4)
+        blob(d, w / 2, h / 2, min(w, h) * 0.28, inner, rng)
+        for _ in range(bubbles):
             bx = w / 2 + rng.uniform(-0.25, 0.25) * w
             by = h / 2 + rng.uniform(-0.2, 0.2) * h
             r = rng.uniform(3, 6)
-            d.ellipse([bx - r, by - r, bx + r, by + r], fill=(164, 224, 124, 235),
-                      outline=(42, 100, 28, 255), width=1)
-            d.ellipse([bx - r / 3, by - r / 2, bx, by], fill=(240, 255, 220, 255))
-        save(img, SPR, f"GOOP{letter}0", w // 2, h // 2)
+            d.ellipse([bx - r, by - r, bx + r, by + r], fill=bub,
+                      outline=rim, width=1)
+            d.ellipse([bx - r / 3, by - r / 2, bx, by], fill=bub_hi)
+        save(img, SPR, f"{prefix}{letter}0", w // 2, h // 2)
+
+
+def gen_goo():
+    puddle("GOOP", (63, 178, 63, 220), (42, 100, 28, 255),
+           (110, 210, 100, 220), (164, 224, 124, 235),
+           (240, 255, 220, 255), seed0=31)
+
+
+def gen_blood_pool():
+    puddle("BPOL", (128, 18, 14, 225), (78, 10, 8, 255),
+           (166, 32, 22, 225), (150, 26, 18, 235),
+           (210, 80, 60, 255), seed0=57, bubbles=3)
+
+
+def gen_eyeball():
+    img, d = canvas(18, 18)
+    d.ellipse([1, 3, 16, 17], fill=(60, 20, 16, 120))          # gore shadow
+    d.ellipse([1, 1, 16, 16], fill=(238, 234, 224, 255),
+              outline=(120, 90, 80, 255), width=2)
+    d.arc([2, 2, 15, 15], start=40, end=140, fill=(200, 190, 178, 255), width=2)
+    for x0, y0, x1, y1 in [(3, 9, 7, 12), (11, 4, 14, 7)]:     # veins
+        d.line([x0, y0, x1, y1], fill=(190, 60, 50, 255), width=1)
+    d.ellipse([5, 4, 12, 11], fill=(70, 140, 130, 255))        # iris
+    d.ellipse([7, 6, 10, 9], fill=(20, 16, 14, 255))           # pupil
+    d.ellipse([6, 5, 8, 7], fill=(255, 255, 255, 255))         # glint
+    save(img, SPR, "EYEBA0", 9, 16)
 
 
 # ----------------------------------------------------------------- pickups --
@@ -432,6 +458,8 @@ if __name__ == "__main__":
     gen_kick_puff()
     gen_gibs()
     gen_goo()
+    gen_blood_pool()
+    gen_eyeball()
     gen_beans()
     gen_chili()
     gen_sushi()
