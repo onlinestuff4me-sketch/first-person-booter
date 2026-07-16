@@ -22,8 +22,24 @@ mechanism has changed.
 
 ## Quick start
 
-You need three things: **GZDoom**, an **IWAD** (the base game data), and this
-mod's **pk3**.
+### macOS: the one-double-click way
+
+Download this whole repo (green **Code** button → *Download ZIP*, or
+`git clone`), then double-click **`run-mac.command`**. It finds GZDoom (or
+offers to `brew install --cask gzdoom`), downloads the free Freedoom game
+data on first run, and launches the mod.
+
+macOS niceties to know:
+
+* If Finder refuses to run the script ("unidentified developer"):
+  right-click it → **Open**, or on newer macOS approve it under *System
+  Settings → Privacy & Security → Open Anyway*. Zero-drama alternative:
+  open Terminal and run `bash run-mac.command` from the repo folder.
+* Don't double-click the `.pk3` itself — it's not a document, it's cargo.
+  GZDoom loads it; the script passes it in for you.
+
+Prefer doing it by hand (or on another OS)? You need three things:
+**GZDoom**, an **IWAD** (the base game data), and this mod's **pk3**.
 
 ### 1. Install GZDoom (4.10 or newer)
 
@@ -53,6 +69,14 @@ Grab `dist/FirstPersonBooter.pk3` from this repo (or build it — see below).
 
 ```sh
 gzdoom -iwad freedoom2.wad -file FirstPersonBooter.pk3
+```
+
+On macOS the app bundle doesn't put `gzdoom` on your PATH; call the binary
+inside it (or just use `run-mac.command`):
+
+```sh
+/Applications/GZDoom.app/Contents/MacOS/gzdoom \
+  -iwad ~/Downloads/freedoom2.wad -file ~/Downloads/FirstPersonBooter.pk3
 ```
 
 On Windows you can also just drag `FirstPersonBooter.pk3` onto `gzdoom.exe`.
