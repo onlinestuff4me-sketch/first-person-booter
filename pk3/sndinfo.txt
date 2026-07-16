@@ -1,0 +1,19 @@
+// logical name    lump (sounds/<LUMP>.wav)
+boot/whoosh        BWHOOSH
+boot/splat         BSPLAT
+boot/thud          BTHUD
+boot/gib           BGIB
+gore/bounce        SQUISH
+
+butt/fart1         FART1
+butt/fart2         FART2
+butt/fart3         FART3
+$random butt/fart  { butt/fart1  butt/fart2  butt/fart3 }
+butt/mega          MEGAFART
+butt/inhale        INHALE
+butt/choke         CHOKE
+butt/pickup        CHEEKS
+
+gas/hiss           GASHISS
+goo/melt           SIZZLE
+goo/bubble         GOOBLUB

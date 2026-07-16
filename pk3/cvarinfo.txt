@@ -1,0 +1,3 @@
+server bool fpb_doorfarts = true;   // gas puffs activate doors/lifts on impact
+server bool fpb_fartjump = true;    // fart recoil + Thunderclap launch
+server int  fpb_gore = 2;           // giblet multiplier, 0 (off) to 4 (deli counter)
