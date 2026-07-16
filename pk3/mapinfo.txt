@@ -1,0 +1,27 @@
+GameInfo
+{
+	PlayerClasses = "BooterPlayer"
+	AddEventHandlers = "FPB_GoreHandler", "FPB_Herald"
+	QuitMessages = "leaving already? the demons can still smell you.",
+		"you can run, but your aroma stays.",
+		"go on. air the place out. you've earned it.",
+		"quitters never toot.",
+		"the boot will be here. waiting. polished.",
+		"fine. hell could use the fresh air.",
+		"warning: kicking real-world objects is frowned upon.",
+		"go wash your foot. you know which one.",
+		"the cheeks never sleep. they only rest.",
+		"beans don't eat themselves, soldier.",
+		"don't hold it in on our account.",
+		"every quit screen is somebody's exit wound.",
+		"leave now and the eyeballs win."
+}
+
+map BUTTEST "The Proving Rounds"
+{
+	levelnum = 99
+	next = "BUTTEST"
+	sky1 = "SKY1"
+	music = "D_RUNNIN"
+	NoIntermission
+}
