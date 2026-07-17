@@ -235,6 +235,12 @@ tools/                generators, builder, checker, previewer
   corn. +40 gas, +40 health, existential questions. Counts as an item.
 * **Cast-call renames**: finish the campaign and meet the parade again —
   "CACODEMON: ONE BIG EYEBALL. TEMPTING."
+* **The Golden Leg**: land a FULL COMPOST (five kick-kills in four seconds)
+  and earn fifteen golden seconds of double boot damage, with a tint to
+  match.
+* **Rank acknowledgments**: boss-tier deaths get a formal sendoff ("THE
+  BIG ONE IS DOWN. WIND DIRECTION: FAVORABLE."), and finding a secret now
+  smells like achievement.
 * **Windshield effect**: gib something point-blank and it ends up on your
   lens for a few seconds (`fpb_screengunk 0` to squeegee it off forever).
 * Point-blank gibs aside, there's a running **ledger**: an end-of-level stat
@@ -253,6 +259,11 @@ barrels to kick, one of every pickup on the north shelf, a practice door on
 the west side, and a **destructible wall** sealing a loot bunker to the
 north — fart it (or kick it) until it gives way. This is the literal
 "blows through walls" demo. Exit switch on the east wall.
+
+New: a **bowling lane** off the south wall. One demon mid-lane (your ball),
+four zombies racked at the far end (your pins), and gutter barrels the
+whole way down. Wind-up punt the demon through the rack and listen for
+the announcer.
 
 ### The Cheeky Mug (optional addon)
 

@@ -135,6 +135,18 @@ class Boot : Weapon
 	}
 }
 
+// The FULL COMPOST reward: fifteen golden seconds of double boot damage.
+// Granted by the gore handler when you land five kick-kills in four seconds.
+class FPB_GoldenLeg : PowerDamage
+{
+	Default
+	{
+		Powerup.Duration -15;
+		Powerup.Color "Gold", 0.15;
+		DamageFactor 2;
+	}
+}
+
 // Impact flash for the kick. SeeSound doubles as the wall-thud.
 class BootPuff : Actor
 {

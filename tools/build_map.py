@@ -62,6 +62,7 @@ STRIP = SEC(0, 0, "FLAT1", "FLAT1", 176, tag=7)     # the destructible wall
 BUNKER = SEC(0, 160, "FLOOR0_1", "FLAT1", 144)
 DOOR = SEC(0, 0, "FLAT1", "FLAT1", 176)             # classic door
 ALCOVE = SEC(0, 128, "FLOOR0_1", "FLAT1", 128)
+LANE = SEC(0, 176, "FLOOR0_1", "CEIL3_5", 150)      # the bowling lane
 
 WALL = "STARTAN2"
 DOORFACE = "BIGDOOR2"
@@ -82,7 +83,14 @@ L((1536, 1024), (1536, 576), SD(ARENA, mid=WALL), blocking=True)
 L((1536, 576), (1536, 448), SD(ARENA, mid="SW1COMP"), blocking=True,
   special=243, playeruse=True)                       # Exit_Normal
 L((1536, 448), (1536, 0), SD(ARENA, mid=WALL), blocking=True)
-L((1536, 0), (0, 0), SD(ARENA, mid=WALL), blocking=True)
+L((1536, 0), (896, 0), SD(ARENA, mid=WALL), blocking=True)
+L((896, 0), (640, 0), SD(ARENA, top=WALL), SD(LANE), twosided=True)
+L((640, 0), (0, 0), SD(ARENA, mid=WALL), blocking=True)
+
+# The bowling lane: punt a demon south, through the pins. Mind the gutters.
+L((640, -704), (640, 0), SD(LANE, mid=WALL), blocking=True)
+L((896, -704), (640, -704), SD(LANE, mid=WALL), blocking=True)
+L((896, 0), (896, -704), SD(LANE, mid=WALL), blocking=True)
 
 # Destructible strip's own edges (visible once it opens).
 L((1152, 1024), (1152, 1040), SD(STRIP, mid=WALL), blocking=True)
@@ -140,6 +148,15 @@ T(-208, 460, 0, 2012)       # medikit
 # spare beans mid-arena
 T(1000, 700, 0, 2007)
 T(1060, 700, 0, 2007)
+# the bowling lane: gutter barrels, one ball-return demon, four zombie pins
+for y in (-160, -352, -544):
+    T(700, y, 0, 2035)
+    T(836, y, 0, 2035)
+T(768, -420, 90, 3002)      # the demon (your ball, technically)
+for x, y in ((768, -592), (732, -644), (804, -644), (768, -676)):
+    T(x, y, 90, 3004)       # the pins
+T(700, -64, 90, 2007)
+T(836, -64, 90, 2007)
 
 
 # ------------------------------------------------------------------- emit --

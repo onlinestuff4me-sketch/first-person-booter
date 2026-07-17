@@ -153,8 +153,14 @@ class FPB_GoreHandler : EventHandler
 			if (kickTics.Size() >= 5)
 			{
 				Console.Printf(
-					"\c[Gold]FULL COMPOST. SOMEBODY OPEN A WINDOW.\c-");
+					"\c[Gold]FULL COMPOST. GOLDEN LEG ENGAGED.\c-");
 				kickTics.Clear();
+				let hero = mo.target;
+				if (hero && hero.player)
+				{
+					hero.GiveInventoryType("FPB_GoldenLeg");
+					hero.A_StartSound("butt/pickup", CHAN_AUTO);
+				}
 			}
 			else if (kickTics.Size() == 3)
 			{
@@ -181,6 +187,15 @@ class FPB_GoreHandler : EventHandler
 			let m = AcidMelter(Actor.Spawn("AcidMelter", mo.pos));
 			if (m) m.tracer = mo;
 		}
+
+		// Rank has its privileges, including a formal sendoff.
+		int basehp = mo.default.health;
+		if (basehp >= 2500)
+			Console.Printf(
+				"\c[Gold]THE BIG ONE IS DOWN. WIND DIRECTION: FAVORABLE.\c-");
+		else if (basehp >= 900)
+			Console.Printf(
+				"\c[Gold]MINIBOSS DELETED. AIR QUALITY: IMPROVING.\c-");
 
 		// Posthumous punctuation: most demons have one last thing to say.
 		// Pitch scales with body mass. Physics.
