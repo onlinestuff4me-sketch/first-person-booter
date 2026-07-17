@@ -100,20 +100,36 @@ class Boot : Weapon
 		}
 		else
 		{
-			// Kicked nothing meaty. Any sports equipment lying around?
+			// Kicked nothing living. Corpses to tidy? Sports equipment?
+			Actor corpse = null;
+			FPB_Eyeball ball = null;
 			BlockThingsIterator it = BlockThingsIterator.Create(self, 96);
 			while (it.Next())
 			{
-				let eye = FPB_Eyeball(it.thing);
-				if (eye == null) continue;
-				double dist = Distance2D(eye);
+				let mo = it.thing;
+				if (mo == null) continue;
+				double dist = Distance2D(mo);
 				if (dist > 80) continue;
-				if (dist > 24 && AbsAngle(ang, AngleTo(eye)) > 50) continue;
-				eye.vel = (cos(ang) * 18 * power, sin(ang) * 18 * power,
+				if (dist > 24 && AbsAngle(ang, AngleTo(mo)) > 50) continue;
+				if (corpse == null && mo.bCorpse && mo.bIsMonster)
+					corpse = mo;
+				if (ball == null) ball = FPB_Eyeball(mo);
+			}
+			if (corpse)
+			{
+				// re-gib the fallen: rude to them, devastating to Arch-viles
+				A_StartSound("boot/splat", CHAN_AUTO);
+				A_Quake(1, 4, 0, 128);
+				FPB_GoreHandler.BurstIntoGiblets(corpse);
+				FPB_GoreHandler.Bump('tidied');
+				corpse.Destroy();
+			}
+			else if (ball)
+			{
+				ball.vel = (cos(ang) * 18 * power, sin(ang) * 18 * power,
 					7 + 3 * power);
-				eye.A_StartSound("gore/eyesqueak", CHAN_BODY);
+				ball.A_StartSound("gore/eyesqueak", CHAN_BODY);
 				FPB_GoreHandler.Bump('eyepunts');
-				break;   // one per kick; this is a game of precision
 			}
 		}
 	}

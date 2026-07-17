@@ -219,6 +219,22 @@ tools/                generators, builder, checker, previewer
   intermission backdrop, five renamed heat levels (*Baby's First Toot* up
   to *GHOST PEPPER. NO REFUNDS.*), and new between-level story text
   explaining what the gas main has to do with all this.
+* **Death toots**: most monsters emit one last comment a comedic beat after
+  dying — pitched by body mass, because physics (`fpb_deathtoots 0` for a
+  respectful silence).
+* **Corpse tidying**: kick a corpse (nothing living in range) to re-gib it
+  on the spot. Rude to them, devastating to Arch-viles, tracked on the
+  stat card as *Corpses tidied*.
+* **Kick streaks**: three kick-kills inside four seconds is a HAT TRICK;
+  five is FULL COMPOST. The announcer also mutters the occasional
+  strictly-rationed remark ("SOMEWHERE, A MOP WEEPS.").
+* **Barrels vent**: exploding barrels now release their industrial
+  effluent as a lingering stink cloud. Chain reactions with chili pots
+  are not a bug.
+* **The Golden Kernel**: one gibbing in forty produces a radiant piece of
+  corn. +40 gas, +40 health, existential questions. Counts as an item.
+* **Cast-call renames**: finish the campaign and meet the parade again —
+  "CACODEMON: ONE BIG EYEBALL. TEMPTING."
 * **Windshield effect**: gib something point-blank and it ends up on your
   lens for a few seconds (`fpb_screengunk 0` to squeegee it off forever).
 * Point-blank gibs aside, there's a running **ledger**: an end-of-level stat
@@ -261,6 +277,7 @@ the whole uninstall.
 | `fpb_gore` | `3` | giblet multiplier, `0` (off) – `4` (deli counter) |
 | `fpb_leaky` | `true` | idle emissions while cheeks are equipped |
 | `fpb_screengunk` | `true` | point-blank gibs splatter the screen briefly |
+| `fpb_deathtoots` | `true` | posthumous commentary, pitched by body mass |
 
 ---
 

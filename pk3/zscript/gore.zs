@@ -16,6 +16,9 @@ class FPB_GoreHandler : EventHandler
 	int eyes;
 	int bowled;
 	int eyepunts;
+	int tidied;
+	int lastQuipTic;
+	Array<int> kickTics;
 
 	// screen gunk slots (written in play, read in RenderOverlay)
 	int gunkBorn[8];
@@ -52,6 +55,15 @@ class FPB_GoreHandler : EventHandler
 		"TWO HUNDRED GIBS: JANITORS OF HELL, UNIONIZE."
 	};
 
+	static const String kQuips[] = {
+		"MOIST.",
+		"THAT ONE HAD PLANS.",
+		"CLEANUP ON AISLE EVERYWHERE.",
+		"THE FLOOR IS SOUP NOW.",
+		"PROFESSIONAL.",
+		"SOMEWHERE, A MOP WEEPS."
+	};
+
 	// Other classes report their deeds here.
 	static void Bump(Name what, int amount = 1)
 	{
@@ -62,17 +74,19 @@ class FPB_GoreHandler : EventHandler
 		else if (what == 'eyes') h.eyes += amount;
 		else if (what == 'bowled') h.bowled += amount;
 		else if (what == 'eyepunts') h.eyepunts += amount;
+		else if (what == 'tidied') h.tidied += amount;
 	}
 
 	String BuildCard()
 	{
 		return String.Format(
 			"\c[Gold]=== LEVEL DIGESTED ===\c-\n"
-			"Boots applied: %d    Farts fired: %d\n"
-			"Doors blown open: %d    Demons bowled: %d\n"
-			"Suffocated: %d    Melted: %d\n"
+			"Boots applied: %d    Corpses tidied: %d\n"
+			"Farts fired: %d    Doors blown open: %d\n"
+			"Demons bowled: %d    Suffocated: %d    Melted: %d\n"
 			"Eyeballs squished: %d    Eyeballs punted: %d",
-			kickGibs, farts, doors, bowled, gasKills, melts, eyes, eyepunts);
+			kickGibs, tidied, farts, doors, bowled, gasKills, melts,
+			eyes, eyepunts);
 	}
 
 	override void WorldLoaded(WorldEvent e)
@@ -85,7 +99,7 @@ class FPB_GoreHandler : EventHandler
 	override void WorldUnloaded(WorldEvent e)
 	{
 		if (kickGibs + gasKills + melts + doors + farts + eyes + bowled
-			+ eyepunts == 0)
+			+ eyepunts + tidied == 0)
 			return;
 		let h = FPB_Herald(EventHandler.Find("FPB_Herald"));
 		if (h) h.card = BuildCard();
@@ -100,7 +114,20 @@ class FPB_GoreHandler : EventHandler
 	override void WorldThingDied(WorldEvent e)
 	{
 		let mo = e.Thing;
-		if (mo == null || mo.player != null || !mo.bIsMonster) return;
+		if (mo == null || mo.player != null) return;
+
+		// Barrels are pressurized with industrial effluent. Now you know.
+		if (mo is "ExplosiveBarrel")
+		{
+			let pc = Actor.Spawn("StinkCloud", mo.pos + (0, 0, 16));
+			if (pc)
+			{
+				pc.target = mo.target;
+				pc.scale = (0.5, 0.5);
+			}
+			return;
+		}
+		if (!mo.bIsMonster) return;
 
 		Name dt = mo.DamageTypeReceived;
 		if (dt == 'Kick')
@@ -116,6 +143,31 @@ class FPB_GoreHandler : EventHandler
 					break;
 				}
 			}
+			// streak accounting: three in four seconds earns a title
+			kickTics.Push(level.maptime);
+			while (kickTics.Size() > 0
+				&& level.maptime - kickTics[0] > 140)
+			{
+				kickTics.Delete(0);
+			}
+			if (kickTics.Size() >= 5)
+			{
+				Console.Printf(
+					"\c[Gold]FULL COMPOST. SOMEBODY OPEN A WINDOW.\c-");
+				kickTics.Clear();
+			}
+			else if (kickTics.Size() == 3)
+			{
+				Console.Printf("\c[Gold]HAT TRICK.\c-");
+			}
+			// the occasional editorial remark, strictly rationed
+			if (random[FPBQuip](0, 99) < 8
+				&& level.maptime - lastQuipTic > 350)
+			{
+				lastQuipTic = level.maptime;
+				Console.Printf("\c[DarkGray]%s\c-",
+					kQuips[random[FPBQuip](0, kQuips.Size() - 1)]);
+			}
 		}
 		else if (dt == 'FartGas')
 		{
@@ -128,6 +180,22 @@ class FPB_GoreHandler : EventHandler
 			melts++;
 			let m = AcidMelter(Actor.Spawn("AcidMelter", mo.pos));
 			if (m) m.tracer = mo;
+		}
+
+		// Posthumous punctuation: most demons have one last thing to say.
+		// Pitch scales with body mass. Physics.
+		let cvt = CVar.FindCVar('fpb_deathtoots');
+		if ((cvt == null || cvt.GetInt() != 0)
+			&& random[FPBToot](0, 99) < 70)
+		{
+			let mt = FPB_MiniToot(Actor.Spawn("FPB_MiniToot",
+				mo.pos + (0, 0, max(6, mo.height * 0.25))));
+			if (mt)
+			{
+				if (mo.mass >= 600) mt.tootPitch = 0.55;
+				else if (mo.mass >= 200) mt.tootPitch = 0.8;
+				else mt.tootPitch = 1.25 + random[FPBToot](0, 30) / 100.0;
+			}
 		}
 	}
 
@@ -220,6 +288,80 @@ class FPB_GoreHandler : EventHandler
 				);
 			}
 		}
+
+		// and once in a great while, the universe tips its hat
+		if (random[FPBGore](0, 39) == 0)
+		{
+			Actor.Spawn("FPB_GoldenKernel", mo.pos + (0, 0, 28));
+		}
+	}
+}
+
+// The last word, delivered a comedic beat after death.
+class FPB_MiniToot : Actor
+{
+	double tootPitch;
+
+	Default
+	{
+		+NOBLOCKMAP
+		+NOGRAVITY
+		+NOINTERACTION
+		+FORCEXYBILLBOARD
+		RenderStyle "Translucent";
+		Alpha 0.75;
+		Scale 0.45;
+	}
+	States
+	{
+	Spawn:
+		TNT1 A 12 NoDelay;
+		TNT1 A 0 A_Jump(128, 2);
+		TNT1 A 8;
+		TNT1 A 0
+		{
+			A_StartSound("butt/fart", CHAN_BODY, 0,
+				tootPitch < 0.8 ? 0.85 : 0.55, ATTN_NORM, tootPitch);
+		}
+		FART A 3 Bright;
+		FART B 3 Bright;
+		FART C 3 Bright A_FadeOut(0.2);
+		Wait;
+	}
+}
+
+// One gibbing in forty produces this. Nobody knows why. Eat it anyway.
+class FPB_GoldenKernel : CustomInventory
+{
+	Default
+	{
+		Radius 10;
+		Height 16;
+		+COUNTITEM
+		+NOGRAVITY
+		+FLOATBOB
+		Scale 1.1;
+	}
+
+	override String PickupMessage()
+	{
+		return "THE GOLDEN KERNEL. YOU FEEL... CHOSEN.";
+	}
+
+	States
+	{
+	Spawn:
+		KERN A 6 Bright;
+		KERN B 6 Bright;
+		Loop;
+	Pickup:
+		TNT1 A 0
+		{
+			A_StartSound("butt/pickup", CHAN_AUTO);
+			A_GiveInventory("Gas", 40);
+			HealThing(40, 0);
+		}
+		Stop;
 	}
 }
 

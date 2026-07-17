@@ -405,6 +405,22 @@ def gen_sushi():
         save(img, SPR, f"MBNS{letter}0", 22, 30)
 
 
+def gen_kernel():
+    """The Golden Kernel: a rare, radiant piece of corn. Do not ask questions."""
+    for i, letter in enumerate("AB"):
+        img, d = canvas(22, 24)
+        d.ellipse([2, 4, 20, 24], fill=(120, 220, 90, 40 + 30 * i))  # aura
+        d.polygon([(11, 4), (18, 12), (17, 19), (11, 22), (5, 19), (4, 12)],
+                  fill=(236, 196, 80, 255), outline=(130, 95, 20, 255))
+        d.polygon([(11, 7), (15, 12), (14, 17), (11, 19)],
+                  fill=(255, 228, 140, 255))
+        d.ellipse([7, 8, 10, 11], fill=(255, 250, 220, 255))          # glint
+        spots = [(3, 3), (19, 8)] if i == 0 else [(18, 3), (3, 16)]
+        for sx, sy in spots:
+            star(d, sx, sy, 4, 3.5, 1.2, fill=(255, 255, 255, 255))
+        save(img, SPR, f"KERN{letter}0", 11, 20)
+
+
 def gen_butt_pickup():
     GOLD = (232, 184, 58, 255); GOLD_DK = (184, 135, 30, 255)
     GOLD_LN = (122, 90, 16, 255)
@@ -676,6 +692,7 @@ if __name__ == "__main__":
     gen_beans()
     gen_chili()
     gen_sushi()
+    gen_kernel()
     gen_butt_pickup()
     gen_splats()
     gen_screen_gunk()
