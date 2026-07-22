@@ -63,11 +63,15 @@ BUNKER = SEC(0, 160, "FLOOR0_1", "FLAT1", 144)
 DOOR = SEC(0, 0, "FLAT1", "FLAT1", 176)             # classic door
 ALCOVE = SEC(0, 128, "FLOOR0_1", "FLAT1", 128)
 LANE = SEC(0, 176, "FLOOR0_1", "CEIL3_5", 150)      # the bowling lane
+NSTRIP = SEC(0, 0, "FLAT1", "FLAT1", 150, tag=8)    # pro-shop breakable wall
+NOOK = SEC(0, 128, "FLOOR0_1", "FLAT1", 136)        # the pro shop
 
 WALL = "STARTAN2"
 DOORFACE = "BIGDOOR2"
-BREAKABLE = dict(special=11, arg0=7, arg1=32, health=90, healthgroup=7,
+BREAKABLE = dict(special=11, arg0=7, arg1=64, health=90, healthgroup=7,
                  deathspecial=True)                  # Door_Open the strip
+BREAKABLE2 = dict(special=11, arg0=8, arg1=64, health=90, healthgroup=8,
+                  deathspecial=True)                 # pro-shop wall
 USEDOOR = dict(special=12, arg0=0, arg1=16, arg2=150,
                playeruse=True, repeatspecial=True)   # Door_Raise behind line
 
@@ -90,7 +94,19 @@ L((640, 0), (0, 0), SD(ARENA, mid=WALL), blocking=True)
 # The bowling lane: punt a demon south, through the pins. Mind the gutters.
 L((640, -704), (640, 0), SD(LANE, mid=WALL), blocking=True)
 L((896, -704), (640, -704), SD(LANE, mid=WALL), blocking=True)
-L((896, 0), (896, -704), SD(LANE, mid=WALL), blocking=True)
+L((896, 0), (896, -240), SD(LANE, mid=WALL), blocking=True)
+L((896, -240), (896, -400), SD(LANE, top=DOORFACE), SD(NSTRIP),
+  twosided=True, **BREAKABLE2)
+L((896, -400), (896, -704), SD(LANE, mid=WALL), blocking=True)
+
+# The pro shop: a cracked wall off the lane hiding the good stuff.
+L((896, -240), (912, -240), SD(NSTRIP, mid=WALL), blocking=True)
+L((912, -240), (912, -400), SD(NSTRIP), SD(NOOK, top=DOORFACE),
+  twosided=True, **BREAKABLE2)
+L((912, -400), (896, -400), SD(NSTRIP, mid=WALL), blocking=True)
+L((912, -240), (1072, -240), SD(NOOK, mid=WALL), blocking=True)
+L((1072, -240), (1072, -400), SD(NOOK, mid=WALL), blocking=True)
+L((1072, -400), (912, -400), SD(NOOK, mid=WALL), blocking=True)
 
 # Destructible strip's own edges (visible once it opens).
 L((1152, 1024), (1152, 1040), SD(STRIP, mid=WALL), blocking=True)
@@ -157,6 +173,10 @@ for x, y in ((768, -592), (732, -644), (804, -644), (768, -676)):
     T(x, y, 90, 3004)       # the pins
 T(700, -64, 90, 2007)
 T(836, -64, 90, 2007)
+# pro-shop loot, behind the cracked wall
+T(960, -320, 180, 83)       # megasphere
+T(1024, -320, 180, 2047)    # cells -> chili
+T(1024, -272, 180, 2007)    # clip -> beans
 
 
 # ------------------------------------------------------------------- emit --

@@ -209,6 +209,60 @@ def leak(dur=0.3, seed=88):
     return np.tanh(1.8 * np.sin(2 * np.pi * np.cumsum(f) / SR)) * flut * env * 0.5
 
 
+def doorslam(dur=0.55, seed=111):
+    """A door leaving its frame under protest: wham, crack, clatter."""
+    rng = np.random.default_rng(seed)
+    n = int(SR * dur)
+    t = np.arange(n) / SR
+    fr = 75 * np.exp(-t * 10) + 32
+    wham = np.sin(2 * np.pi * np.cumsum(fr) / SR) * np.exp(-t * 9) * 1.5
+    body = bandpass(rng.standard_normal(n), 180, 900) * np.exp(-t * 12) * 0.8
+    sig = wham + body
+    for at in (0.02, 0.09, 0.2):
+        cn = int(SR * 0.05)
+        ct = np.arange(cn) / SR
+        crack = highpass(rng.standard_normal(cn), 1800) * np.exp(-ct * 90)
+        s = int(at * SR)
+        sig[s:s + cn] += crack * 0.9
+    return sig
+
+
+def woodsnap(dur=0.07, seed=122):
+    rng = np.random.default_rng(seed)
+    n = int(SR * dur)
+    t = np.arange(n) / SR
+    crack = highpass(rng.standard_normal(n), 2200) * np.exp(-t * 110)
+    tick = np.sin(2 * np.pi * (300 - 1400 * t) * t) * np.exp(-t * 70) * 0.5
+    return crack + tick
+
+
+def rocktap(dur=0.06, seed=133):
+    n = int(SR * dur)
+    t = np.arange(n) / SR
+    fr = 190 * np.exp(-t * 40) + 80
+    return np.sin(2 * np.pi * np.cumsum(fr) / SR) * np.exp(-t * 60)
+
+
+def collapse(dur=1.3, seed=144):
+    """A wall giving up: deep rumble plus a hail of falling masonry."""
+    rng = np.random.default_rng(seed)
+    n = int(SR * dur)
+    t = np.arange(n) / SR
+    rumble = lowpass(rng.standard_normal(n), 190) * np.exp(-t * 2.6) * 1.4
+    crackle = highpass(rng.standard_normal(n), 1400) \
+        * (rng.random(n) ** 6) * np.exp(-t * 3) * 1.6
+    sig = rumble + crackle
+    for _ in range(7):
+        at = rng.random() * 0.8
+        kn = int(SR * 0.06)
+        kt = np.arange(kn) / SR
+        fr = (140 + 120 * rng.random()) * np.exp(-kt * 45) + 70
+        knock = np.sin(2 * np.pi * np.cumsum(fr) / SR) * np.exp(-kt * 50)
+        s = int(at * SR)
+        sig[s:s + kn] += knock * 0.8
+    return sig
+
+
 def eyesqueak(dur=0.18, seed=99):
     """Punted-eyeball flight noise: a small indignant rising squeak."""
     n = int(SR * dur)
@@ -253,4 +307,8 @@ if __name__ == "__main__":
     write("SIZZLE", sizzle())
     write("GOOBLUB", bubbles())
     write("EYESQK", eyesqueak())
+    write("DOORSLAM", doorslam())
+    write("WSNAP", woodsnap())
+    write("ROKTAP", rocktap())
+    write("RUMBLE", collapse())
     print("Done.")

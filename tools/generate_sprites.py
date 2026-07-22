@@ -655,6 +655,47 @@ def gen_splats():
         save(img, GFX, f"FSPLAT{i}", 32, 32)
 
 
+def gen_debris():
+    """Door splinters (wood), wall rubble (stone), and construction dust."""
+    for i, letter in enumerate("ABCD"):   # splinters: thin rotated shards
+        img, d = canvas(22, 22)
+        rng = random.Random(300 + i)
+        a = rng.uniform(0, math.pi)
+        L = 9
+        x0, y0 = 11 - L * math.cos(a), 11 - L * math.sin(a)
+        x1, y1 = 11 + L * math.cos(a), 11 + L * math.sin(a)
+        d.line([x0, y0, x1, y1], fill=(94, 62, 34, 255), width=5)
+        d.line([x0, y0, x1, y1], fill=(150, 108, 62, 255), width=2)
+        save(img, SPR, f"SPLN{letter}0", 11, 14)
+    img, d = canvas(24, 8)                # settled splinter
+    d.line([2, 4, 22, 4], fill=(94, 62, 34, 255), width=4)
+    d.line([4, 3, 20, 3], fill=(150, 108, 62, 255), width=1)
+    save(img, SPR, "SPLNE0", 12, 7)
+
+    for i, letter in enumerate("ABCD"):   # rubble: angular gray chunks
+        img, d = canvas(20, 20)
+        rng = random.Random(340 + i)
+        blob(d, 10, 10, 7.5, (122, 116, 108, 255), rng, lumps=5, wobble=0.55,
+             outline=(62, 58, 52, 255), width=2)
+        blob(d, 8, 8, 3.5, (156, 150, 140, 255), rng, lumps=5, wobble=0.4)
+        save(img, SPR, f"RUBL{letter}0", 10, 13)
+    img, d = canvas(24, 12)               # settled rubble
+    rng = random.Random(360)
+    blob(d, 12, 7, 8, (122, 116, 108, 255), rng, lumps=6, wobble=0.4,
+         outline=(62, 58, 52, 255), width=2)
+    save(img, SPR, "RUBLE0", 12, 11)
+
+    for i, letter in enumerate("ABC"):    # dust puffs
+        size = 56 + i * 14
+        img, d = canvas(size, size)
+        rng = random.Random(380 + i)
+        c = size / 2
+        puff_cluster(d, c, c, size * 0.4, rng,
+                     [(1.15, (96, 90, 84, 130)), (0.8, (134, 128, 120, 150)),
+                      (0.45, (176, 170, 160, 160))])
+        save(img, SPR, f"DUST{letter}0", size // 2, size // 2 + 4)
+
+
 def gen_screen_gunk():
     """Big soft red splats drawn over the view when a gib lands on the lens."""
     for i in (1, 2):
@@ -696,6 +737,7 @@ if __name__ == "__main__":
     gen_butt_pickup()
     gen_splats()
     gen_screen_gunk()
+    gen_debris()
     gen_titlepic()
     gen_interpic()
     gen_credit()

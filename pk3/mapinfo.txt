@@ -1,7 +1,7 @@
 GameInfo
 {
 	PlayerClasses = "BooterPlayer"
-	AddEventHandlers = "FPB_GoreHandler", "FPB_Herald"
+	AddEventHandlers = "FPB_GoreHandler", "FPB_Herald", "FPB_Demolition"
 	QuitMessages = "leaving already? the demons can still smell you.",
 		"you can run, but your aroma stays.",
 		"go on. air the place out. you've earned it.",

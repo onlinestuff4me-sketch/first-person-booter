@@ -199,6 +199,8 @@ class GasCloud : Actor
 		case 203: case 206:                             // Generic_Lift, Plat_DownWaitUpStayLip
 			level.ExecuteSpecial(l.special, target, l, false,
 				l.args[0], l.args[1], l.args[2], l.args[3], l.args[4]);
+			FPB_Demolition.SplinterBurst(pos, angle, 3);
+			FPB_Demolition.DustAt(pos, 0.6);
 			FPB_GoreHandler.Bump('doors');
 			break;
 		default:

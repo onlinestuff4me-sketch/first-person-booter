@@ -139,6 +139,20 @@ Bonus physics: farts **blow doors and lifts open** on impact (locked doors
 still check your keys), every fart **alerts the whole map** (obviously), and
 alt-firing at the floor is a **fart-jump**. Speedrunners, you're welcome.
 
+### Demolition
+
+* **Kick a door** and it doesn't open — it SLAMS at maximum speed in a
+  burst of wood splinters, dust, and camera shake. Works on every door on
+  every map. Kick a locked one: rattle, thud, "LOCKED. YOUR TOE HURTS
+  NOW." (Keys still open them the boring way.)
+* **Breakable walls** (on the mod's own maps) now demolish in stages:
+  dust and chips per hit, a STRUCTURAL DAMAGE warning below half health,
+  then a full blowout — rubble with real bounce physics sprayed off both
+  faces, rolling smoke, a BREACH announcement, and the geometry giving
+  way underneath it. Kicks (140) and farts both chew through them.
+* Demolitions are tallied on the stat card: *Doors breached* and *Walls
+  demolished*.
+
 ### The economy
 
 Ammo is **Gas** (max 100, backpack 200). The world provides:
@@ -264,6 +278,10 @@ New: a **bowling lane** off the south wall. One demon mid-lane (your ball),
 four zombies racked at the far end (your pins), and gutter barrels the
 whole way down. Wind-up punt the demon through the rack and listen for
 the announcer.
+
+Newer: the lane's east wall hides the **pro shop** behind a second
+breakable panel — demolish it (watch for STRUCTURAL DAMAGE at half
+health) for a megasphere and snacks.
 
 ### The Cheeky Mug (optional addon)
 

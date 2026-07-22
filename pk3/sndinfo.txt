@@ -22,3 +22,8 @@ gas/hiss           GASHISS
 goo/melt           SIZZLE
 goo/bubble         GOOBLUB
 gore/eyesqueak     EYESQK
+
+door/slam          DOORSLAM
+wood/snap          WSNAP
+rock/tap           ROKTAP
+wall/collapse      RUMBLE

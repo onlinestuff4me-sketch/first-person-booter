@@ -17,6 +17,7 @@ class FPB_GoreHandler : EventHandler
 	int bowled;
 	int eyepunts;
 	int tidied;
+	int walls;
 	int lastQuipTic;
 	Array<int> kickTics;
 
@@ -75,6 +76,7 @@ class FPB_GoreHandler : EventHandler
 		else if (what == 'bowled') h.bowled += amount;
 		else if (what == 'eyepunts') h.eyepunts += amount;
 		else if (what == 'tidied') h.tidied += amount;
+		else if (what == 'walls') h.walls += amount;
 	}
 
 	String BuildCard()
@@ -82,10 +84,11 @@ class FPB_GoreHandler : EventHandler
 		return String.Format(
 			"\c[Gold]=== LEVEL DIGESTED ===\c-\n"
 			"Boots applied: %d    Corpses tidied: %d\n"
-			"Farts fired: %d    Doors blown open: %d\n"
-			"Demons bowled: %d    Suffocated: %d    Melted: %d\n"
+			"Farts fired: %d    Doors breached: %d\n"
+			"Walls demolished: %d    Demons bowled: %d\n"
+			"Suffocated: %d    Melted: %d\n"
 			"Eyeballs squished: %d    Eyeballs punted: %d",
-			kickGibs, tidied, farts, doors, bowled, gasKills, melts,
+			kickGibs, tidied, farts, doors, walls, bowled, gasKills, melts,
 			eyes, eyepunts);
 	}
 
@@ -99,7 +102,7 @@ class FPB_GoreHandler : EventHandler
 	override void WorldUnloaded(WorldEvent e)
 	{
 		if (kickGibs + gasKills + melts + doors + farts + eyes + bowled
-			+ eyepunts + tidied == 0)
+			+ eyepunts + tidied + walls == 0)
 			return;
 		let h = FPB_Herald(EventHandler.Find("FPB_Herald"));
 		if (h) h.card = BuildCard();

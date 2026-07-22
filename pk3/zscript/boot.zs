@@ -131,6 +131,68 @@ class Boot : Weapon
 				ball.A_StartSound("gore/eyesqueak", CHAN_BODY);
 				FPB_GoreHandler.Bump('eyepunts');
 			}
+			else
+			{
+				// Or a door. Doors respect force, applied correctly.
+				FLineTraceData td;
+				bool hitWall = LineTrace(ang, range + 16, aimPitch,
+					0, 0., 0., 0., td);
+				if (hitWall && td.HitType == TRACE_HitWall
+					&& td.HitLine != null)
+				{
+					KickDoor(td, ang, power);
+				}
+			}
+		}
+	}
+
+	// Slam a kicked door open at maximum violence. Locked doors respond
+	// with a rattle and a medical bill.
+	action void KickDoor(FLineTraceData td, double ang, double power)
+	{
+		let l = td.HitLine;
+		bool back = td.LineSide == 1;
+		int spd = 128;   // "off its rails"
+		int res;
+		switch (l.special)
+		{
+		case 11:   // Door_Open
+			res = level.ExecuteSpecial(11, self, l, back,
+				l.args[0], spd, l.args[2], 0, 0);
+			break;
+		case 12:   // Door_Raise
+			res = level.ExecuteSpecial(12, self, l, back,
+				l.args[0], spd, l.args[2], l.args[3], 0);
+			break;
+		case 13:   // Door_LockedRaise (key check still applies)
+			res = level.ExecuteSpecial(13, self, l, back,
+				l.args[0], spd, l.args[2], l.args[3], l.args[4]);
+			break;
+		case 14:   // Door_Animated
+			res = level.ExecuteSpecial(14, self, l, back,
+				l.args[0], spd, l.args[2], l.args[3], 0);
+			break;
+		case 202:  // Generic_Door
+			res = level.ExecuteSpecial(202, self, l, back,
+				l.args[0], spd, l.args[2], l.args[3], l.args[4]);
+			break;
+		default:
+			return;
+		}
+
+		if (res != 0)
+		{
+			A_StartSound("door/slam", CHAN_AUTO);
+			A_Quake(3, 10, 0, 320);
+			FPB_Demolition.SplinterBurst(td.HitLocation, ang,
+				8 + int(4 * power));
+			FPB_Demolition.DustAt(td.HitLocation, 0.9);
+			FPB_GoreHandler.Bump('doors');
+		}
+		else
+		{
+			A_StartSound("boot/thud", CHAN_AUTO);
+			Console.Printf("\c[DarkGray]LOCKED. YOUR TOE HURTS NOW.\c-");
 		}
 	}
 }
